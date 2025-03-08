@@ -1,0 +1,110 @@
+/* App.css */
+.App {
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+}
+
+.App-header {
+  background: linear-gradient(135deg, #1a202c, #2d3748);
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.left-pane {
+  background: linear-gradient(135deg, #2c5282, #2b6cb0);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+  width:40%;
+}
+
+.right-pane {
+  width:50%;
+  background: linear-gradient(135deg, #faf089, #f6ad55);
+  color: #2d3748;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.form-group {
+  margin: 15px 0;
+  text-align: left;
+  width:80%;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  border: 2px solid #63b3ed;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+input:focus, textarea:focus {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #63b3ed;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.2s ease-in-out;
+}
+
+button:hover {
+  background-color: #3182ce;
+  transform: scale(1.1);
+}
+
+button:disabled {
+  background-color: #718096;
+  cursor: not-allowed;
+}
+
+.history {
+  margin-top: 20px;
+  padding: 10px;
+  background: #2d3748;
+  border-radius: 5px;
+  color: white;
+  text-align: left;
+}
+
+.history ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.history li {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #4a5568;
+  border-radius: 5px;
+}
