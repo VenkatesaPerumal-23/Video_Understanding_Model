@@ -20,7 +20,7 @@ function App() {
       const formData = new FormData();
       formData.append('video', file);
 
-      const response = await axios.post('http://localhost:5000/upload', formData);
+      const response = await axios.post('https://video-understanding-model.onrender.com/upload', formData);
       setVideoId(response.data.videoId);
       alert(`Video uploaded. Video ID: ${response.data.videoId}`);
     } catch (error) {
@@ -39,7 +39,7 @@ function App() {
 
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/generate-text', {
+      const response = await axios.post('https://video-understanding-model.onrender.com/generate-text', {
         videoId,
         prompt,
       });
