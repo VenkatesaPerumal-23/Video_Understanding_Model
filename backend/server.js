@@ -10,7 +10,7 @@ let VideoIdentifier;
 const createIndex = async () => {
   try {
     const index = await client.index.create({
-      name: 'videogpt',
+      name: 'final_videogpt_2025',
       engines: [
         {
           name: 'marengo2.6',
@@ -69,7 +69,7 @@ const uploadFiles = async (indexId, inputPath) => {
 const main = async () => {
   try {
     const indexId = await createIndex();
-    const videoPath = 'chain_snatching.mp4';
+    const videoPath = 'music.mp4';
     await uploadFiles(indexId, videoPath);
     console.log("Generated Video ID:", VideoIdentifier);
   } catch (error) {
