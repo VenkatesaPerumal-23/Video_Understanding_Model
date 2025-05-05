@@ -1,16 +1,23 @@
-// app.js
+// server1.js
 import pkg from 'twelvelabs-js';
-import { promises as fsPromises } from 'fs';
-import * as path from 'path';
+import express from 'express';
+import cors from 'cors';
+import multer from 'multer';
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+const upload = multer({ dest: 'uploads/' }); // Temporary storage for uploaded files
 
 const { TwelveLabs } = pkg;
-const client = new TwelveLabs({ apiKey: 'tlk_2QPR5EK1GPCJVQ2BG5HBX3ZF6ECQ'}); // Replace with actual key
-let VideoIdentifier;
+const client = new TwelveLabs({ apiKey: 'tlk_2QPR5EK1GPCJVQ2BG5HBX3ZF6ECQ' }); // Replace with environment variable in production
 
+// Create a new index on the fly
 const createIndex = async () => {
   try {
     const index = await client.index.create({
-      name: 'final_videogpt_2025',
+      name: 'videogpt-' + Date.now(),
       engines: [
         {
           name: 'marengo2.6',
@@ -23,7 +30,7 @@ const createIndex = async () => {
       ],
     });
 
-    console.log(`Created index: id=${index.id}`);
+    console.log(`Created index: id=${index.id} name=${index.name}`);
     return index.id;
   } catch (error) {
     console.error('Error creating index:', error);
@@ -31,50 +38,61 @@ const createIndex = async () => {
   }
 };
 
-const uploadFiles = async (indexId, inputPath) => {
-  try {
-    const stats = await fsPromises.stat(inputPath);
-
-    let files = [];
-    if (stats.isDirectory()) {
-      files = await fsPromises.readdir(inputPath);
-      files = files.map((file) => path.join(inputPath, file));
-    } else if (stats.isFile()) {
-      files = [inputPath];
-    } else {
-      throw new Error('Input path is neither file nor directory');
-    }
-
-    const videoExtensions = ['.mp4', '.avi', '.mov', '.mkv'];
-    for (const file of files) {
-      if (!videoExtensions.includes(path.extname(file).toLowerCase())) {
-        console.log(`Skipping non-video file: ${file}`);
-        continue;
-      }
-      console.log(`Uploading ${file}`);
-      const task = await client.task.create({ indexId, file });
-      await task.waitForDone(50, (task) => {
-        console.log(`  Status=${task.status}`);
-      });
-
-      if (task.status !== 'ready') throw new Error(`Indexing failed: ${task.status}`);
-      VideoIdentifier = task.videoId;
-      console.log(`Video uploaded. Unique video ID: ${task.videoId}`);
-    }
-  } catch (error) {
-    console.error('Upload error:', error);
-  }
-};
-
-const main = async () => {
+// Endpoint: Upload new video and get videoId
+app.post('/upload', upload.single('video'), async (req, res) => {
   try {
     const indexId = await createIndex();
-    const videoPath = 'music.mp4';
-    await uploadFiles(indexId, videoPath);
-    console.log("Generated Video ID:", VideoIdentifier);
-  } catch (error) {
-    console.error('Error in main:', error);
-  }
-};
+    const file = req.file;
 
-main();
+    if (!file) {
+      return res.status(400).json({ error: 'No video file uploaded' });
+    }
+
+    console.log(`Uploading file: ${file.path}`);
+
+    const task = await client.task.create({
+      indexId,
+      file: file.path,
+    });
+
+    await task.waitForDone(50, (task) => {
+      console.log(`  Status=${task.status}`);
+    });
+
+    if (task.status !== 'ready') {
+      throw new Error(`Indexing failed: ${task.status}`);
+    }
+
+    const videoId = task.videoId;
+    console.log(`Upload complete. Video ID: ${videoId}`);
+    res.status(200).json({ videoId });
+  } catch (error) {
+    console.error('Upload error:', error);
+    res.status(500).json({ error: error.message || 'Failed to upload video' });
+  }
+});
+
+// Endpoint: Generate text from video and prompt
+app.post('/generate-text', async (req, res) => {
+  const { videoId, prompt } = req.body;
+  console.log(`Received request: videoId=${videoId}, prompt="${prompt}"`);
+
+  try {
+    const text = await client.generate.text(videoId, prompt);
+    console.log(`Response from Twelve Labs:`, text);
+
+    if (text && text.data) {
+      res.status(200).json({ text: text.data });
+    } else {
+      res.status(500).json({ error: 'No text data in response.' });
+    }
+  } catch (error) {
+    console.error('Error generating text:', error);
+    res.status(500).json({ error: error.message || 'Failed to generate text.' });
+  }
+});
+
+const PORT = 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
