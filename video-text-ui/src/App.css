@@ -3,7 +3,7 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f4f6f9;
+  background: white;
 }
 
 .App {
@@ -24,7 +24,7 @@ body {
 }
 
 .card {
-  background-color: white;
+  background: radial-gradient(circle, rgba(238, 174, 202, 1) 0%, rgba(148, 187, 233, 1) 100%);
   padding: 2rem;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -68,12 +68,13 @@ textarea {
 button {
   padding: 0.8rem 1.5rem;
   font-size: 1rem;
-  background-color: #3f51b5;
+  background: linear-gradient(90deg,rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 100%, rgba(237, 221, 83, 1) 100%);
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.3s;
+  font-weight: 600;
 }
 
 button:hover {
