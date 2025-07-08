@@ -16,14 +16,14 @@ const createIndex = async () => {
   try {
     const index = await client.index.create({
       name: 'videogpt-' + Date.now(),
-      engines: [
+      models: [
         {
-          name: 'marengo2.6',
-          options: ['visual', 'conversation', 'text_in_video'],
+          name: 'marengo2.7',
+          options: ['visual', 'audio'],
         },
         {
-          name: 'pegasus1.1',
-          options: ['visual', 'conversation'],
+          name: 'pegasus1.2',
+          options: ['visual', 'audio'],
         },
       ],
     });
@@ -53,7 +53,7 @@ app.post('/upload', upload.single('video'), async (req, res) => {
     });
 
     await task.waitForDone(50, (task) => {
-      console.log(`  Status=${task.status}`);
+      console.log(`Status=${task.status}`);
     });
 
     if (task.status !== 'ready') {
@@ -74,7 +74,7 @@ app.post('/generate-text', async (req, res) => {
   console.log(`Received request: videoId=${videoId}, prompt="${prompt}"`);
 
   try {
-    const text = await client.generate.text(videoId, prompt);
+    const text = await client.analyze(videoId, prompt);
     console.log(`Response from Twelve Labs:`, text);
 
     if (text && text.data) {
