@@ -1,4 +1,3 @@
-// server1.js
 import pkg from 'twelvelabs-js';
 import express from 'express';
 import cors from 'cors';
@@ -8,12 +7,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const upload = multer({ dest: 'uploads/' }); // Temporary storage for uploaded files
+const upload = multer({ dest: 'uploads/' }); 
 
 const { TwelveLabs } = pkg;
-const client = new TwelveLabs({ apiKey: 'tlk_2QPR5EK1GPCJVQ2BG5HBX3ZF6ECQ' }); // Replace with environment variable in production
+const client = new TwelveLabs({ apiKey: 'tlk_36G22V538TPGAP27ZV3DS10WYBFQ' }); 
 
-// Create a new index on the fly
 const createIndex = async () => {
   try {
     const index = await client.index.create({
@@ -38,7 +36,6 @@ const createIndex = async () => {
   }
 };
 
-// Endpoint: Upload new video and get videoId
 app.post('/upload', upload.single('video'), async (req, res) => {
   try {
     const indexId = await createIndex();
@@ -72,7 +69,6 @@ app.post('/upload', upload.single('video'), async (req, res) => {
   }
 });
 
-// Endpoint: Generate text from video and prompt
 app.post('/generate-text', async (req, res) => {
   const { videoId, prompt } = req.body;
   console.log(`Received request: videoId=${videoId}, prompt="${prompt}"`);
