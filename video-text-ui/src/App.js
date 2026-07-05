@@ -19,7 +19,6 @@ function App() {
     try {
       const formData = new FormData();
       formData.append('video', file);
-
       const response = await axios.post('https://video-understanding-model.onrender.com/upload', formData);
       setVideoId(response.data.videoId);
       alert(`Video uploaded. Video ID: ${response.data.videoId}`);
@@ -36,7 +35,6 @@ function App() {
       alert('Please enter both Video ID and Prompt.');
       return;
     }
-
     setLoading(true);
     try {
       const response = await axios.post('https://video-understanding-model.onrender.com/generate-text', {
@@ -64,7 +62,9 @@ function App() {
           <div className="form-section">
             <label>Upload Video:</label>
             <input type="file" accept="video/*" onChange={handleVideoUpload} disabled={uploading} />
-            {uploading && <p>Uploading video and indexing...</p>}
+            {uploading && (
+              <p className="upload-status">⏳ Uploading video and indexing...</p>
+            )}
           </div>
 
           <div className="form-section">
@@ -102,11 +102,11 @@ function App() {
           <h2>🕘 Query History</h2>
           <ul>
             {queryHistory.map((entry, index) => (
-              <li key={index}>
-                <strong>Video ID:</strong> {entry.videoId}<br />
-                <strong>Prompt:</strong> {entry.prompt}<br />
-                <strong>Result:</strong> {entry.result}
-              </li>
+                <li key={index}>
+                  <strong>Video ID:</strong> <span className="history-id">{entry.videoId}</span><br />
+                  <strong>Prompt:</strong> {entry.prompt}<br />
+                  <strong>Result:</strong> {entry.result}
+                </li>
             ))}
           </ul>
         </div>
