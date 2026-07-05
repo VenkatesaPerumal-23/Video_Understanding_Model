@@ -10,7 +10,7 @@ app.use(express.json());
 const upload = multer({ dest: 'uploads/' }); 
 
 const { TwelveLabs } = pkg;
-const client = new TwelveLabs({ apiKey: 'tlk_36G22V538TPGAP27ZV3DS10WYBFQ' }); 
+const client = new TwelveLabs({ apiKey: 'tlk_1JNSFKJ1N82KM02VDTXWR0HGD19G' }); 
 
 const createIndex = async () => {
   try {
@@ -18,7 +18,7 @@ const createIndex = async () => {
       name: 'videogpt-' + Date.now(),
       models: [
         {
-          name: 'marengo2.7',
+          name: 'marengo3.0',
           options: ['visual', 'audio'],
         },
         {
