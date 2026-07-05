@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import pkg from 'twelvelabs-js';
 import express from 'express';
 import cors from 'cors';
@@ -7,10 +10,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const upload = multer({ dest: 'uploads/' }); 
+const upload = multer({ dest: 'uploads/' });
 
 const { TwelveLabs } = pkg;
-const client = new TwelveLabs({ apiKey: 'tlk_1JNSFKJ1N82KM02VDTXWR0HGD19G' }); 
+
+// Read API key from .env
+const client = new TwelveLabs({
+  apiKey: process.env.TWELVE_LABS_API_KEY,
+});
 
 const createIndex = async () => {
   try {
@@ -62,33 +69,45 @@ app.post('/upload', upload.single('video'), async (req, res) => {
 
     const videoId = task.videoId;
     console.log(`Upload complete. Video ID: ${videoId}`);
+
     res.status(200).json({ videoId });
   } catch (error) {
     console.error('Upload error:', error);
-    res.status(500).json({ error: error.message || 'Failed to upload video' });
+    res.status(500).json({
+      error: error.message || 'Failed to upload video',
+    });
   }
 });
 
 app.post('/generate-text', async (req, res) => {
   const { videoId, prompt } = req.body;
-  console.log(`Received request: videoId=${videoId}, prompt="${prompt}"`);
+
+  console.log(
+    `Received request: videoId=${videoId}, prompt="${prompt}"`
+  );
 
   try {
     const text = await client.analyze(videoId, prompt);
-    console.log(`Response from Twelve Labs:`, text);
+
+    console.log('Response from Twelve Labs:', text);
 
     if (text && text.data) {
       res.status(200).json({ text: text.data });
     } else {
-      res.status(500).json({ error: 'No text data in response.' });
+      res.status(500).json({
+        error: 'No text data in response.',
+      });
     }
   } catch (error) {
     console.error('Error generating text:', error);
-    res.status(500).json({ error: error.message || 'Failed to generate text.' });
+    res.status(500).json({
+      error: error.message || 'Failed to generate text.',
+    });
   }
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
